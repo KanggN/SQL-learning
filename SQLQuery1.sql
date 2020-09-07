@@ -56,7 +56,7 @@ insert into GiaoDich(MaTK,SoTien,ThoiGianGD) values (190020110004,20000,'2013/02
 insert into GiaoDich(MaTK,SoTien,ThoiGianGD) values (190020110004,-2000,'2013/02/17 7:00:00')
 insert into GiaoDich(MaTK,SoTien,ThoiGianGD) values (190020110004,-5000,'2013/02/19 9:00:00')
 insert into GiaoDich(MaTK,SoTien,ThoiGianGD) values (190020110004,15000,'2013/02/24 15:00:00')
-insert into GiaoDich(MaTK,SoTien,ThoiGianGD) values (190020110005,6000,'2013/02/26 9:00:00') --deleted
+insert into GiaoDich(MaTK,SoTien,ThoiGianGD) values (190020110005,-6000,'2013/02/26 9:00:00') 
 insert into GiaoDich(MaTK,SoTien,ThoiGianGD) values (190020110005,25000,'2013/02/27 14:00:00') --deleted
 
 
@@ -144,8 +144,54 @@ group by kh.HoTen
 select tk.MaTK
 from TaiKhoan tk 
 where tk.MaTK not in (select gd.MaTK from GiaoDich gd )
+-- Câu 14
+select gd.MaTK as 'Danh sach tk gui tien 02/2013'
+from GiaoDich gd
+where gd.MaTK not in(
+select gd.MaTK
+from GiaoDich gd
+where gd.SoTien < 0
+group by gd.MaTK) and year(gd.ThoiGianGD) = 2013 and month(gd.ThoiGianGD) = 2
+-- Câu 15
+select gd.MaTK, kh.HoTen
+from GiaoDich gd join TaiKhoan tk on tk.MaTK = gd.MaTK join KhachHang kh on kh.MaKH = tk.MaKH
+where gd.SoTien < 0 and gd.MaTK not in (
+select gd.MaTK
+from GiaoDich gd
+where gd.SoTien > 0 )
+-- Câu 16
+select sum(tk.SoDu)
+from TaiKhoan tk join LoaiTaiKhoan ltk on tk.LoaiTK = ltk.MaLoai
+where ltk.TenLoai = 'Khong ky han'
+-- Câu 17
+select sum(gd.SoTien)
+from GiaoDich gd join TaiKhoan tk on gd.MaTK = tk.MaTK join LoaiTaiKhoan ltk on tk.LoaiTK = ltk.MaLoai
+where ltk.TenLoai = 'Co ky han'
+-- Câu 18
+select distinct gd.MaTK, count(gd.MaTK) as 'So lan giao dich'
+from GiaoDich gd
+group by gd.MaTK
+-- Câu 19
+select distinct gd.MaTK, count(gd.MaTK) as 'So lan gui tien'
+from GiaoDich gd
+where gd.SoTien > 0
+group by gd.MaTK
+-- Câu 20
+select kh.HoTen, tk.MaTK, count(kh.HoTen) as 'So lan rut tien 02/2013'
+from KhachHang kh join TaiKhoan tk on kh.MaKH = tk.MaKH join GiaoDich gd on tk.MaTK = gd.MaTK
+where gd.SoTien < 0 and month(gd.ThoiGianGD) = 2 and year(gd.ThoiGianGD) = 2013
+group by kh.HoTen, tk.MaTK
+-- Câu 21
+select count(gd.MaTk) as 'So lan gd cua 190020110004'
+from GiaoDich gd
+where gd.MaTK = 190020110004 and year(gd.ThoiGianGD) = 2013
+-- Cau 22
+insert into TaiKhoan values (190020110006,getdate(),0,1,'C1D100001')
+-- Cau 23
+delete from TaiKhoan where SoDu = 0
 
-select * from GiaoDich
 select * from KhachHang
 select * from TaiKhoan
+select * from GiaoDich
+
 select * from LoaiTaiKhoan
