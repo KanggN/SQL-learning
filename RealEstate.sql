@@ -1,30 +1,32 @@
 ﻿create database BatDongSan
+SET DATEFORMAT dmy    --Chỉnh lại pattern cho Date
 create table NGUOI_BAN (
 	MaNb char(9) primary key,
-	HoTen varchar(50),
-	DiaChi varchar(70),
+	HoTen nvarchar(50),
+	DiaChi nvarchar(70),
 	SoDT char(10)
 )
+
 create table DIA_OC (
 	MaDo char(9) primary key,
 	So varchar(10),
-	Duong varchar(30),
+	Duong nvarchar(30),
 	Phuong varchar(30),
 	Quan varchar(30),
 	DTDat real,
 	DTXD real,
-	Huong varchar(10),
-	ViTri varchar(20),
+	Huong nvarchar(10),
+	ViTri nvarchar(20),
 	MoTa varchar(100),
 	MaLDo int foreign key references LOAI_DIA_OC(MaLDo)
 )
 create table LOAI_DIA_OC (
 	MaLDo int primary key,
-	TenLDo varchar(50)
+	TenLDo nvarchar(50)
 )
 create table DICH_VU (
 	MaDv int primary key,
-	TenDv	varchar(50),
+	TenDv	nvarchar(50),
 	TienDv money,
 )
 create table PHIEU_DANG_KY(
@@ -89,7 +91,7 @@ insert DIA_OC values ('DO333', '332/1', N'Nguyễn Thái Học', 9, 1, 100, 100,
 insert DIA_OC values ('DO444', '980', N'Lê Hồng Phong', 4, 5, 450, 450, N'Bắc', N'Mặt tiền',null,2)
 insert DIA_OC values ('DO555', '111/45', N'Trương Định', 10, 3, 85, 85, N'Đông Nam', N'Hẻm',null,1)
 
-SET DATEFORMAT dmy    --Chỉnh lại pattern cho Date
+
 insert PHIEU_DANG_KY values ('PDK111','1/5/2005', 1, 1040000,111222333)
 insert PHIEU_DANG_KY values ('PDK222','19/10/2005', 2, 600000,222333444)
 insert PHIEU_DANG_KY values ('PDK333','7/9/2005', 3, 1000000,333444555)
@@ -111,15 +113,26 @@ insert PHIEU_THU values ('PT777',null,'15/11/2005',2,400000,'PT666')
 ALTER TABLE PHIEU_THU --add foreign key
 ADD constraint FK_MAPTG FOREIGN KEY (MaPtGoc) REFERENCES PHIEU_THU(MaPt)
 
+insert PHIEU_GIA_HAN values ('PGH111','PDK111','DO111',1,'5/7/2005','5/7/2005','5/9/2005')
+insert PHIEU_GIA_HAN values ('PGH222','PDK111','DO111',1,'1/11/2005','1/11/2005','31/12/2005')
+insert PHIEU_GIA_HAN values ('PGH444','PDK333','DO444',1,'15/11/2005','15/11/2005','15/12/2005')
+insert PHIEU_GIA_HAN values ('PGH444','PDK333','DO555',3,'15/11/2005','15/11/2005','15/12/2005')
+
+select nb.MaNb,nb.HoTen,nb.DiaChi
+from NGUOI_BAN nb join PHIEU_DANG_KY pdk on nb.MaNb = pdk.MaNb join CHI_TIET_PDK ct on ct.MaPdk = pdk.MaPdk
+where month(ct.TuNgay) >= 8 and month(ct.DenNgay) <= 10 and year(ct.TuNgay) = 2005 and year(ct.DenNgay) = 2005
+group by nb.MaNb,nb.HoTen,nb.DiaChi
+
+
+
+
 select * from NGUOI_BAN
 select * from LOAI_DIA_OC
 select * from DICH_VU
 select * from DIA_OC
 Select * from PHIEU_DANG_KY
 select * from CHI_TIET_PDK
-
 select * from PHIEU_THU
-
 select * from PHIEU_GIA_HAN
 
 
