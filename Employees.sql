@@ -31,12 +31,26 @@ insert Employee values ('E005','John','AD','01/01/05',550)
 
 
 
+select d.DeptName,e.empName, count(e.DeptID) as [Số lượng nv],e.Salary
+from Department d left join Employee e on d.DeptID = e.DeptID
+group by d.DeptName,e.empName,e.Salary
+order by e.Salary Desc
 
+select top 2 e.empName, e.Salary
+from Employee e
+order by e.Salary Desc
 
-select d.DeptName,n.empName, count(n.DeptID) as [Số lượng nv],n.Salary
-from Department d left join em  on d.DeptID = n.DeptID
-group by d.DeptName,n.empName,n.Salary
-order by n.Salary Desc
+select e.* 
+from Department d join Employee e on d.DeptID = e.DeptID
+where d.DeptID = 'SA' 
+
+select e.empName,e.Salary*110/100 as N'Lương đã tăng'
+from Department d join Employee e on d.DeptID = e.DeptID
+where d.DeptName = 'Accounting'
+
+select d.DeptName,e.empName 
+from Department d left join Employee e on d.DeptID = e.DeptID
+where e.empName is null
 
 create table Employee (
 	EmpID char(5) primary key,
@@ -54,10 +68,10 @@ alter table Employee
 --add	JoinDate datetime not null
 add	Salary int
 insert Employee values ('E001','Philip','AC','01/01/01',400)
-insert em
-
 
 drop table Employee
 select * from Department
-select * from Employees.dbo.
+select * from Employee
+
+
 

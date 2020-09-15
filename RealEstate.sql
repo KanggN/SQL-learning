@@ -115,16 +115,43 @@ ADD constraint FK_MAPTG FOREIGN KEY (MaPtGoc) REFERENCES PHIEU_THU(MaPt)
 
 insert PHIEU_GIA_HAN values ('PGH111','PDK111','DO111',1,'5/7/2005','5/7/2005','5/9/2005')
 insert PHIEU_GIA_HAN values ('PGH222','PDK111','DO111',1,'1/11/2005','1/11/2005','31/12/2005')
-insert PHIEU_GIA_HAN values ('PGH444','PDK333','DO444',1,'15/11/2005','15/11/2005','15/12/2005')
+insert PHIEU_GIA_HAN values ('PGH333','PDK333','DO444',1,'15/11/2005','15/11/2005','15/12/2005')
 insert PHIEU_GIA_HAN values ('PGH444','PDK333','DO555',3,'15/11/2005','15/11/2005','15/12/2005')
 
+--Câu 1
 select nb.MaNb,nb.HoTen,nb.DiaChi
 from NGUOI_BAN nb join PHIEU_DANG_KY pdk on nb.MaNb = pdk.MaNb join CHI_TIET_PDK ct on ct.MaPdk = pdk.MaPdk
 where month(ct.TuNgay) >= 8 and month(ct.DenNgay) <= 10 and year(ct.TuNgay) = 2005 and year(ct.DenNgay) = 2005
 group by nb.MaNb,nb.HoTen,nb.DiaChi
+--Câu 2
+select nb.MaNb,nb.HoTen,nb.DiaChi,pdk.NgayDk
+from NGUOI_BAN nb join PHIEU_DANG_KY pdk on nb.MaNb = pdk.MaNb
+where month(pdk.NgayDk) = 10
+--Câu 3
+select nb.MaNb,nb.HoTen,nb.DiaChi,pgh.NgayGh
+from NGUOI_BAN nb join PHIEU_DANG_KY pdk on nb.MaNb = pdk.MaNb join PHIEU_GIA_HAN pgh on pgh.PhieuDk = pdk.MaPdk
+where  month(pgh.NgayGh) = 11
+--pgh.NgayGh like '2005-11%' -->unusable
+--month(pgh.NgayGh) = 11
+--Câu 4 
+select nb.MaNb,nb.HoTen,nb.DiaChi
+from NGUOI_BAN nb join PHIEU_DANG_KY pdk on nb.MaNb = pdk.MaNb 
+join CHI_TIET_PDK ct on ct.MaPdk = pdk.MaPdk join DICH_VU dv on ct.MaDv = dv.MaDv
+where dv.TenDv = N'Quảng cáo trên báo'
+--Câu 5 
+select nb.MaNb,nb.HoTen, max(datediff(dd,pgh.TuNgay, pgh.DenNgay)) as N'Số ngày gia hạn cao nhất'
+from NGUOI_BAN nb join PHIEU_DANG_KY pdk on nb.MaNb = pdk.MaNb 
+join PHIEU_GIA_HAN pgh on pgh.PhieuDk = pdk.MaPdk
+group by nb.MaNb,nb.HoTen
+--Câu 6 
+select do.So,do.Duong,do.Phuong,do.Quan
+from DIA_OC do
+where 
+select do.MaLDo ,max(datediff(dd,pgh.TuNgay, pgh.DenNgay)) as 'Tổng số ngày gia hạn'
+from DIA_OC do join PHIEU_GIA_HAN pgh on do.MaDo = pgh.MaDo
+group by do.MaLDo
 
-
-
+--do.So,do.Duong,do.Phuong,do.Quan
 
 select * from NGUOI_BAN
 select * from LOAI_DIA_OC
