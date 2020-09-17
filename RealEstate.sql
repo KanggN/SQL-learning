@@ -144,14 +144,50 @@ from NGUOI_BAN nb join PHIEU_DANG_KY pdk on nb.MaNb = pdk.MaNb
 join PHIEU_GIA_HAN pgh on pgh.PhieuDk = pdk.MaPdk
 group by nb.MaNb,nb.HoTen
 --Câu 6 
-select do.So,do.Duong,do.Phuong,do.Quan
-from DIA_OC do
-where 
-select do.MaLDo ,max(datediff(dd,pgh.TuNgay, pgh.DenNgay)) as 'Tổng số ngày gia hạn'
-from DIA_OC do join PHIEU_GIA_HAN pgh on do.MaDo = pgh.MaDo
-group by do.MaLDo
+select do.So,do.Duong,do.Phuong,do.Quan, max(datediff(dd,ct.TuNgay, ct.DenNgay)) as 'Số ngày ĐK gia hạn đầu tiên lâu nhất trong 2015'
+from PHIEU_DANG_KY pdk join CHI_TIET_PDK ct on pdk.MaPdk = ct.MaPdk join DIA_OC do on do.MaDo = ct.MaDo
+where year(ct.TuNgay) = 2005
+group by do.So,do.Duong,do.Phuong,do.Quan
+--Câu 7 
+select nb.MaNb,nb.HoTen,nb.DiaChi,count(distinct ct.MaDo) Sodiaoc --Bỏ as
+from NGUOI_BAN nb join PHIEU_DANG_KY pdk on pdk.MaNb = nb.MaNb 
+join CHI_TIET_PDK ct on ct.MaPdk = pdk.MaPdk
+group by nb.MaNb,nb.HoTen,nb.DiaChi
+order by Sodiaoc desc
+--Câu 8 
+select nb.MaNb,nb.HoTen,nb.DiaChi,count(distinct pgh.MaPgh) + count(distinct pdk.MaPdk) as SoLanDangKiQC
+from NGUOI_BAN nb left join PHIEU_DANG_KY pdk on pdk.MaNb = nb.MaNb 
+left join PHIEU_GIA_HAN pgh on pgh.PhieuDk = pdk.MaPdk
+group by nb.MaNb,nb.HoTen,nb.DiaChi
+--Câu 9
+select So,Duong,Phuong,Quan,sum(SoLanDK) SoLanDK from(
+select do.So,do.Duong,do.Phuong,do.Quan,count(pgh.MaDo) SoLanDK
+from DIA_OC do left join PHIEU_GIA_HAN pgh on do.MaDo = pgh.MaDo
+group by do.So,do.Duong,do.Phuong,do.Quan
+union all
+select do.So,do.Duong,do.Phuong,do.Quan, count(distinct ct.MaDo) SoLanDK
+from DIA_OC do left join CHI_TIET_PDK ct on ct.MaDo = do.MaDo 
+group by do.So,do.Duong,do.Phuong,do.Quan
+) unionTable group by So,Duong,Phuong,Quan
+--Câu 10
+select nb.HoTen, ct.MaDo, do.Quan,count(do.Quan) SolanQC
+from NGUOI_BAN nb join PHIEU_DANG_KY pdk on pdk.MaNb = nb.MaNb 
+join CHI_TIET_PDK ct on ct.MaPdk = pdk.MaPdk 
+join DIA_OC do on do.MaDo = ct.MaDo
+where do.Quan = 5 
+group by nb.HoTen, ct.MaDo, do.Quan
+--Câu 11 
+select HoTen, count(distinct MaDV) SoDVkhacnhauSD 
+from (
+select nb.HoTen, ct.MaDv
+from NGUOI_BAN nb join PHIEU_DANG_KY pdk on nb.MaNb = pdk.MaNb
+join CHI_TIET_PDK ct on ct.MaPdk = pdk.MaPdk
+union all
+select nb.HoTen, pgh.MaDv
+from NGUOI_BAN nb join PHIEU_DANG_KY pdk on nb.MaNb = pdk.MaNb
+join PHIEU_GIA_HAN pgh on pgh.PhieuDk = pdk.MaPdk) unionTable
+group by HoTen
 
---do.So,do.Duong,do.Phuong,do.Quan
 
 select * from NGUOI_BAN
 select * from LOAI_DIA_OC
