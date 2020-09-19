@@ -96,11 +96,44 @@ insert Lop values('TH2002/01','K2002','CNTT','CQ',1),
 ('TH2002/02','K2002','CNTT','CQ',2),
 ('VL2003/01','K2003','VL','CQ',1)
 
-select * from Khoa
-select * from KhoaHoc
-select * from Lop
-select * from ChuongTrinh
+--Câu 1
+select sv.hoTen, k.tenKhoa
+from SinhVien sv join Lop l on sv.maLop = l.Ma join Khoa k on l.maKhoa = k.Ma
+where k.tenKhoa = N'Công nghệ thông tin'
+--Câu 2
+select sv.hoTen,sv.namSinh,year(getdate()) - sv.namSinh age
+from SinhVien sv
+where year(getdate()) - sv.namSinh < 18
+--Câu 3
+select sv.hoTen, kq.maMonHoc
+from SinhVien sv join Lop l on sv.maLop = l.Ma join KhoaHoc kh on kh.Ma = l.maKhoaHoc
+join KetQua kq on kq.maSinhVien = sv.Ma join MonHoc mh on mh.Ma = kq.maMonHoc
+where l.maKhoa = 'CNTT' and kh.namBatDau = 2002 and kh.namKetThuc = 2006 and mh.tenMonHoc = N'Cấu trúc dữ liệu 1'
+and sv.Ma not in (select maSinhVien from KetQua)
+group by sv.hoTen,kq.maMonHoc 
+--Câu 4 
+select sv.hoTen
+from SinhVien sv join KetQua kq on sv.Ma = kq.maSinhVien join MonHoc mh on mh.Ma = kq.maMonHoc
+where kq.diem < 5 and kq.lanThi = 1 and mh.tenMonHoc = N'Cấu trúc dữ liệu 1'
+--Câu 5 
+select sv.hoTen,sv.maLop, l.maKhoaHoc, ct.tenChuongTrinh, SL
+from SinhVien sv join Lop l on sv.maLop = l.Ma
+join ChuongTrinh ct on l.maChuongTrinh = ct.Ma
+join SiSo s on s.maLop = sv.maLop
+
+select sv.maLop, count(sv.maLop) SL into SiSo
+from SinhVien sv
+group by sv.maLop
+--Câu 6 
+
+
+select * from SiSo
 select * from SinhVien
-select * from KetQua
+select * from Lop
+select * from KhoaHoc
 select * from MonHoc
+select * from Khoa
+select * from ChuongTrinh
+select * from KetQua
 select * from GiangKhoa
+
