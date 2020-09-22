@@ -121,10 +121,16 @@ from SinhVien sv join Lop l on sv.maLop = l.Ma
 join ChuongTrinh ct on l.maChuongTrinh = ct.Ma
 join SiSo s on s.maLop = sv.maLop
 
-select sv.maLop, count(sv.maLop) SL into SiSo
+select sv.maLop, count(sv.maLop) SL into SiSo --Temp Table
 from SinhVien sv
 group by sv.maLop
---Câu 6 
+--Câu 6 --Need fixing
+
+select distinct maMonHoc, diem, lanthi
+from KetQua kq
+where kq.maSinhVien = '0212003'
+order by lanThi desc
+
 
 
 select * from SiSo
