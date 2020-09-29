@@ -34,6 +34,22 @@ CREATE DATABASE LibraryManagement
 	from Publisher p join Books b on p.Code = b.Code
 	where b.QOH > 0
 	select * from vwBookInfo
+	/*BookCode, BookName, PubName and Price*/
+	go --
+	alter proc Soldbooks(@qty int = null)
+	as 
+		if @qty is null
+		begin
+			select b.BookCode,b.BookName,p.PubName, b.Price
+			from Books b join Publisher p on b.Code = p.Code
+		end
+		else 
+			begin
+				update Books set QOH = QOH - @qty
+				select * from Books
+			end
+	exec Soldbooks 0
+		
 /*
     Publisher(Code varchar(10) PK, PubName varchar(30),
 	Address varchar(50)
@@ -59,5 +75,27 @@ Tasks:
   out BookCode, BookName, PubName and Price of all bOkks
   Else , it will decrease the QOH of all books
   by @qty parameter
+*/
+/*Tạo clustered index tên IDX_Pub trên cột PubName của bảng Publisher*/
 
+/* Ver 2
+A)Tạo database tên BookStore có 2 table
+    1) Publisher (PubCode varchar(10) PK, pubName varchar(30),
+	   Address varchar(50)
+    2) Book (BookCode varchar(10) PK, bookName varchar(40),
+	Price int, QOH int, PubCode varchar(10) FK)
+	B) Viết query để ràng buộc Price>0 and price <1000
+	C) Viết query để ràng buộc QOH >=0
+	D) Tạo clustered index tên IDX_Pub trên cột PubName của bảng 
+	Publisher
+	E) Tạo view tên vwBookInfo hiển thị các thông tin
+	BookCode, BookName, Price, QOH, pubName với điều kiện
+	QOH >0
+	F) Tạo store proc tên SoldBooks
+	với tham số đầu vào @qty integer
+	Nhiện vụ của store proc :
+	- Nếu không có giá trị được truyền cho @qty thì sẽ liệt kê
+	tất cả sách.
+	-Ngược lại : sẽ giảm QOH của tất cả sách bởi tham số @qty
+	Ex: Exec SoldBooks 5
 */
