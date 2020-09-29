@@ -88,8 +88,47 @@ select top 2 maDH
 from DonHang
 order by ngayDH desc
 
+alter view vw_TinhSLDat 
+as
+select mh.maMH, mh.tenMH, isnull(sum(ct.Sluong),0) as Sluongdat
+from MatHang mh left join CTDonHang ct on
+mh.maMH = ct.maMH
+group by mh.maMH, mh.tenMH
+
+select * from vw_TinhSLDat 
+
+create proc listMH as
+select * from MatHang
+exec listMH
+
+create proc listMH2 @maMH varchar(10) as
+select * from MatHang
+where @maMH = maMH
+
+exec listMH2 'TV203'
+
+create proc top1muanhieu as
+select top 1 kh.tenKH, ct.Sluong
+from KhachHang kh join DonHang dh on kh.maKH = dh.maKH
+join CTDonHang ct on ct.maDH = dh.maDH
+order by ct.Sluong desc
+exec top1muanhieu
+
+create proc listDH @maKH varchar(10) as 
+select dh.*
+from DonHang dh join KhachHang kh on kh.maKH = dh.maKH
+where kh.maKH = @maKH
+exec listDH 'KH01'
+
+create proc discount @month int, @year int as
+select ct.maDH, sum(ct.Sluong*mh.Dongia)*0.9 as 'GiaGiam10%'
+from CTDonHang ct join MatHang mh on mh. maMH = ct.maMH join DonHang dh on dh.maDH = ct.maDH
+where month(dh.ngayDH) = @month and year(dh.ngayDH) = @year
+group by ct.maDH
+exec discount 5,2014
+
+
 select * from MatHang
 select * from DonHang
 select * from CTDonHang
-
 select * from KhachHang
