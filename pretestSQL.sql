@@ -127,6 +127,12 @@ where month(dh.ngayDH) = @month and year(dh.ngayDH) = @year
 group by ct.maDH
 exec discount 5,2014
 
+select * into  ctnonindex from CTDonHang
+select * into  ctindex from CTDonHang
+select * from ctindex
+create clustered index CIex on ctindex(maDH,maMH) 
+select * from ctindex where maDH = 'DH03'
+select * from ctnonindex where maDH = 'DH03'
 
 select * from MatHang
 select * from DonHang
