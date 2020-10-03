@@ -1,6 +1,6 @@
-﻿drop database Employees
+﻿create database Employees
 use Employees
-create database Employees
+drop database Employees
 create table Department (
 	DeptID char(2) primary key,
 	DeptName varchar(40) not null,
@@ -53,34 +53,42 @@ select d.DeptName,e.empName
 from Department d left join Employee e on d.DeptID = e.DeptID
 where e.empName is null
 
-create table Employee (
-	EmpID char(5) primary key,
-	EmpName varchar(25) not null,
-	DeptID char(2) foreign key references Department(DeptID),
-	JoinDate datetime not null,
-	Salary int
-)
-create table Employee (
-	EmpID char(5) primary key
-)
-alter table Employee
---add DeptID char(2) foreign key references Department(DeptID)
---add EmpName varchar(25) not null
---add	JoinDate datetime not null
 add	Salary int
 insert Employee values ('E001','Philip','AC','01/01/01',400)
 
-drop table Employee
 
-create proc countemp @deptname, @totalemp output
+go
+alter proc countemp @deptname varchar(40), @totalemp int output
 as
-	select 
+	begin
+	select e.EmpName
 	from Employee e join Department d on e.deptID = d.DeptID
 	where @deptName = d.DeptName
+	select @totalemp = @@ROWCOUNT;
+	end
+declare @count int;
+exec countemp 'Accounting', @count output
+select @count 
+
+alter trigger tg_checkSalary
+on Employee
+for update
+as 
+	if (select salary from inserted) not between 100 and 2000
+	begin
+	print 'Salary cant be below 100 or above 2000'
+	rollback tran
+	end
+
+
 select * from Department
 select * from Employee
 
+update Employee
+set Salary = 400 where EmpID = 'E001'
 
 
+RAISERROR 6969 ('A vendor''s credit rating is too low to accept new
+purchase orders.', 16, 1);
 
 
