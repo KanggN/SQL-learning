@@ -87,8 +87,16 @@ select * from Employee
 update Employee
 set Salary = 400 where EmpID = 'E001'
 
+create table ValueTable (
+	valuee char(1)
+)
+drop table ValueTable
+begin tran
+insert ValueTable values('A')
+insert ValueTable values('B')
+rollback tran
+insert ValueTable values('C')
+select valuee from ValueTable
 
-RAISERROR 6969 ('A vendor''s credit rating is too low to accept new
-purchase orders.', 16, 1);
 
 
