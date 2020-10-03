@@ -1,4 +1,5 @@
 ﻿drop database Employees
+use Employees
 create database Employees
 create table Department (
 	DeptID char(2) primary key,
@@ -22,7 +23,7 @@ insert Department values ('RD','R and D')
 insert Department values ('MK','Marketing')
 
 drop table Employee
-select * from Nhanvien
+select * from Employee
 insert Employee values ('E001','Philip','AC','01/01/01',400)
 insert Employee values ('E002','Hann','SA','01/01/03',300)
 insert Employee values ('E003','Anna','TE','01/01/02',450)
@@ -70,8 +71,16 @@ add	Salary int
 insert Employee values ('E001','Philip','AC','01/01/01',400)
 
 drop table Employee
+
+create proc countemp @deptname, @totalemp output
+as
+	select 
+	from Employee e join Department d on e.deptID = d.DeptID
+	where @deptName = d.DeptName
 select * from Department
 select * from Employee
+
+
 
 
 
