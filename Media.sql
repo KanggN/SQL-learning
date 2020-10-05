@@ -29,17 +29,24 @@ insert into Album values(1,'PT1',1,'Anh PT1','Vol1',25000,1),
 (4,'LT2',4,'Anh LT2','Vol2',35000,2), 
 (5,'DT',5,'Anh DT','Vol1',40000,3)
 
-select * from Categories
-select * from Album
+
 create clustered index IX_CateID on Categories(CateID)
 
-create trigger tg_e @CateID varchar(20) on categories 
+alter trigger tg_e on categories 
 for delete 
-as if exists (
+as 
+	if exists (
+		select a.*
+		from Album a join Categories c on c.CateId = a.CateId)
+	begin
+		print 'you cant'
+		rollback tran
+	end
+
 select a.*
-from Album a join Categories c on a.CateId = c.CateId
-where c.CateID = @CateID)
-begin
-print 'you cant'
-rollback tran
-end
+from Album a join Categories c on c.CateId = a.CateId
+ 
+delete from Categories where CateID = 1
+
+select * from Categories
+select * from Album
