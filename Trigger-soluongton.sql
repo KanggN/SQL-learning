@@ -1,5 +1,5 @@
-﻿create database storeDb
-use storeDb
+﻿create database Storage
+use Storage
 create table kho
 (
 	makho int identity,
@@ -24,14 +24,14 @@ delete from donhang
 DBCC CHECKIDENT ('dbo.kho', RESEED, 1)
 
 --Tao trigger tg_ktSlHang
-create trigger tg_ktSlHang
+alter trigger tg_ktSlHang
 on Donhang
 for insert
 as
 	declare @sl int
 	select @sl = count(*) from kho k join inserted i
 	on k.mahang = i.mahang
-	where slton - i.sldat <0
+	where k.slton - i.sldat <0
 	if(@sl > 0)
 		begin
 			print 'Khong du hang de ban'
@@ -43,6 +43,8 @@ as
 select * from kho
 select * from donhang
 insert donhang values('DH002','MH002',40)
+insert donhang values('DH003','MH002',90)
+update donhang set sldat = 90 where madh = 'DH002'
 /* Đơn hàng DH002 chỉ muốn đặt 30 thùng Lê Mỹ. Viết trigger để cập nhật lại slton của mh này trong kho.*/
 
 create trigger tgUpKho
