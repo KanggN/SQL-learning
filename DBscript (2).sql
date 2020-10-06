@@ -316,7 +316,12 @@ from customer c join business b on b.cust_id = c.cust_id
 select e.emp_id, first_name + last_name as name, count(account_id) as number
 from Employee e left join account a on a.open_emp_id = e.emp_id
 group by e.emp_id, first_name + last_name
-
+-- Câu 6
+select cust_id
+from Account
+group by cust_id
+having count (cust_id) = 1
+-- Câu 7
 
 
 select * from Account
