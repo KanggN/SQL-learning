@@ -23,3 +23,7 @@ where city='San Diego'
 select c.customer_id, c.first_name, c.city, order_date, order_id
 from customerNoindex c, sales.orders
 where city='San Diego'
+
+use BikeStore
+select * from production.products for xml auto, elements, root ('ListProducts')
+select * from production.products for json auto
