@@ -1,4 +1,5 @@
 ﻿create database Storage
+drop database Storage
 use Storage
 create table kho
 (
@@ -17,11 +18,67 @@ create table donhang
 	mahang varchar(10) foreign key references kho,
 	sldat int
 	)
-insert donhang values('DH002','MH002',10)
+
 delete from donhang
 
 --reset identity
 DBCC CHECKIDENT ('dbo.kho', RESEED, 1)
+
+alter trigger tg_ktsl on donhang for insert,update as --Bảng inserted liên quan với lệnh update chứ không riêng insert
+	 if exists (select * from inserted i join kho k on k.mahang = i.mahang  where  k.slton - i.sldat < 0)
+	begin 
+		print 'Khong du hang'
+		rollback tran
+	end
+create trigger tg_in on donhang for insert as
+begin
+	update kho
+	set slton = slton - (select i.sldat from inserted i join kho k on i.mahang = k.mahang)
+	from kho k join inserted i on i.mahang = k.mahang
+end
+
+alter trigger tg_de on donhang for delete as
+begin
+	update kho
+	set slton = slton + (select d.sldat from deleted d join kho k on d.mahang = k.mahang)
+	from kho k join deleted d on d.mahang = k.mahang
+end
+
+create trigger tg_up on donhang for update
+as 
+	begin
+	update kho
+	set slton = slton - (select i.sldat from inserted i join kho k on k.mahang = i.mahang)
+	+ (select d.sldat from deleted d join kho k on d.mahang = k.mahang)
+	from kho k join inserted i on i.mahang = k.mahang
+	end
+
+
+delete from kho
+delete from donhang
+delete from donhang where madh = 'DH003'
+delete from donhang where madh = 'DH004'
+
+insert kho values(N'Thủ đức','MH002',N'Lê Mỹ',80)
+insert kho values(N'Tân bình','MH003',N'Táo Tàu',30)
+insert donhang values('DH003','MH002',10)
+insert donhang values('DH004','MH003',20)
+
+update donhang set sldat = 90 where mahang = 'MH002' 
+select * from donhang
+select * from kho
+
+
+
+
+
+
+
+
+
+
+
+
 
 --Tao trigger tg_ktSlHang
 alter trigger tg_ktSlHang

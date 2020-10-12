@@ -291,10 +291,9 @@ REFERENCES [dbo].[CUSTOMER] ([CUST_ID])
 GO
 ALTER TABLE [dbo].[INDIVIDUAL] CHECK CONSTRAINT [INDIVIDUAL_CUSTOMER_FK]
 GO
-USE [master]
-GO
 ALTER DATABASE [PE_DBI202_Sp2020] SET  READ_WRITE 
 GO
+
 --Câu 1
 select * from Customer
 where cust_type_cd = 'I' 
@@ -321,7 +320,8 @@ select cust_id
 from Account
 group by cust_id
 having count (cust_id) = 1
--- Câu 7
+
+
 
 
 select * from Account
