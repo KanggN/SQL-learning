@@ -187,6 +187,14 @@ select nb.HoTen, pgh.MaDv
 from NGUOI_BAN nb join PHIEU_DANG_KY pdk on nb.MaNb = pdk.MaNb
 join PHIEU_GIA_HAN pgh on pgh.PhieuDk = pdk.MaPdk) unionTable
 group by HoTen
+--Câu 12
+select nb.HoTen from NGUOI_BAN nb join PHIEU_DANG_KY pdk on pdk.MaNb = nb.MaNb
+where pdk.MaPdk in (
+select MaPdk 
+from CHI_TIET_PDK 
+where SoTien >= 200000
+group by MaPdk
+having count(distinct MaDv) = 3 )
 
 
 select * from NGUOI_BAN
