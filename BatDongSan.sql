@@ -188,13 +188,30 @@ from NGUOI_BAN nb join PHIEU_DANG_KY pdk on nb.MaNb = pdk.MaNb
 join PHIEU_GIA_HAN pgh on pgh.PhieuDk = pdk.MaPdk) unionTable
 group by HoTen
 --Câu 12
-select nb.HoTen from NGUOI_BAN nb join PHIEU_DANG_KY pdk on pdk.MaNb = nb.MaNb
+select nb.HoTen,nb.HoTen,nb.DiaChi from NGUOI_BAN nb
+join PHIEU_DANG_KY pdk on pdk.MaNb = nb.MaNb
+where pdk.MaPdk not in (
+select MaPdk
+from CHI_TIET_PDK
+where SoTien < 200000)
+--Câu 13
+select do.MaDo,do.So,do.Duong,do.Phuong,do.Quan 
+from DIA_OC do where do.MaDo in (
+select MaDo
+from CHI_TIET_PDK ct
+where SoTien between 100000 and 300000)
+--Câu 14
+select do.MaDo,do.So,do.Duong,do.Phuong,do.Quan 
+from CHI_TIET_PDK ct join DIA_OC do on do.MaDo = ct.MaDo
+group by do.MaDo,do.So,do.Duong,do.Phuong,do.Quan
+having count (distinct ct.MaDv) = 3
+--Câu 15
+select nb.HoTen,nb.HoTen,nb.DiaChi from NGUOI_BAN nb 
+join PHIEU_DANG_KY pdk on pdk.MaNb = nb.MaNb
 where pdk.MaPdk in (
-select MaPdk 
-from CHI_TIET_PDK 
-where SoTien >= 200000
-group by MaPdk
-having count(distinct MaDv) = 3 )
+select ct.MaPdk from CHI_TIET_PDK ct
+where month(ct.TuNgay) = 9 and ct.SoTien between 100000 and 200000
+group by ct.MaPdk)
 
 
 select * from NGUOI_BAN

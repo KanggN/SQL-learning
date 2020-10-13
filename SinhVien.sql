@@ -124,12 +124,27 @@ join SiSo s on s.maLop = sv.maLop
 select sv.maLop, count(sv.maLop) SL into SiSo --Temp Table
 from SinhVien sv
 group by sv.maLop
---Câu 6 --Need fixing
-
-select distinct maMonHoc, diem, lanthi
+--Câu 6 
+select avg(A.diem)--,A.maSinhVien,A.maMonHoc,A.diem,B.Lanthimax
+from KetQua A join (
+select distinct kq.maMonHoc,max(kq.lanThi) as Lanthimax
 from KetQua kq
 where kq.maSinhVien = '0212003'
-order by lanThi desc
+group by kq.maMonHoc) B on A.maMonHoc = B.maMonHoc
+where A.lanThi = B.Lanthimax and A.maSinhVien = '0212003'
+
+alter proc kiemtra @hoten nvarchar(50), @ma varchar(20), @result char(1) output as --Cẩn thận nvarchar
+if exists(
+select *
+from SinhVien
+where hoTen = @hoten and Ma = @ma)
+	set @result = 'D'
+	else 
+	set @result = 'S'
+
+declare @a char(1)
+exec kiemtra N'Nguyễn Vĩnh An','0212001',@a output
+print @a
 
 
 
