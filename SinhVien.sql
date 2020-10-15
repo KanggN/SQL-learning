@@ -1,4 +1,5 @@
 ﻿create database SinhVien
+use SinhVien
 create table Khoa
 (
 	Ma varchar(10) primary key,
@@ -157,7 +158,7 @@ declare @diem int
 exec Tradiem '0212003','THT02', @diem output
 print @diem
 --Câu 5.3
-alter proc Tradiemtb @Masv varchar(10), @Diemtb float output as
+create proc Tradiemtb @Masv varchar(10), @Diemtb float output as
 select @Diemtb = avg(kq.diem)
 from KetQua kq join (select distinct kq.maMonHoc,max(kq.lanThi) as Lanthimax
 from KetQua kq
@@ -169,7 +170,7 @@ declare @diem float
 exec Tradiemtb '0212003', @diem output
 print @diem
 --Câu 5.4
-alter proc Tradiem1 @Masv varchar(10), @Mon varchar(10) as
+create proc Tradiem1 @Masv varchar(10), @Mon varchar(10) as
 select kq.lanThi,kq.diem
 from KetQua kq 
 where kq.maSinhVien = @Masv and kq.maMonHoc = @Mon 
@@ -188,7 +189,7 @@ from SinhVien
 where maLop = @Malop
 exec Tralop 'TH2002/01'
 --Câu 6.2
-alter proc Sodiem @Masv varchar(10),@Masv1 varchar(10), @Mon varchar(20) as
+create proc Sodiem @Masv varchar(10),@Masv1 varchar(10), @Mon varchar(20) as
 declare @diem float, @diem1 float
 select @diem = kq.diem
 from KetQua kq 
@@ -204,10 +205,32 @@ If (@diem > @diem1)
 	print N'Điểm 2 SV bằng nhau (' + CAST(@diem as varchar) + N' điểm'
 	else
 	print N'SV thứ hai cao điểm hơn (' + CAST(@diem1 as varchar) + N' điểm so với ' + CAST(@diem as varchar) + N' điểm)'
-exec Sodiem '0212002','0212001','THT02'
+exec Sodiem '0212001','0212002','THT02'
 select *
 from KetQua
 where maMonHoc = 'VLT01'
+--Câu 6.3
+create proc Ketquathilanmot @Masv varchar(10) as
+select distinct maMonHoc, diem, case when diem < 5 then N'Rớt' else N'Đậu' end as KetQua
+from KetQua
+where lanThi = 1 and maSinhVien = @Masv
+exec Ketquathilanmot '0212002'
+--Câu 6.4
+create proc Sinhvienkhoa @Makhoa varchar(10) as
+select sv.Ma,sv.hoTen,sv.namSinh
+from khoa k join lop l on l.maKhoa = k.Ma
+join SinhVien sv on sv.maLop = l.Ma
+where k.Ma = @Makhoa
+exec Sinhvienkhoa 'VL'
+--Câu 6.5 Chưa xong
+alter proc Ketquachung @Masv varchar(10), @Mon varchar(10) as
+declare @Ketqua table (lanthi int, diem float)
+select @lanthi = lanThi, @diem = diem
+from KetQua
+where maSinhVien = @Masv and maMonHoc = @Mon 
+
+exec Ketquachung '0212001','THT01'
+
 
 select * from SiSo
 select * from SinhVien
