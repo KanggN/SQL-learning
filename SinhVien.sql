@@ -224,12 +224,26 @@ where k.Ma = @Makhoa
 exec Sinhvienkhoa 'VL'
 --Câu 6.5 Chưa xong
 alter proc Ketquachung @Masv varchar(10), @Mon varchar(10) as
-declare @Ketqua table (lanthi int, diem float)
-select @lanthi = lanThi, @diem = diem
+declare @diem int, @diem1 int, @diem2 int
+declare @t table (lanthi int, diem float)
+insert into @t 
+select lanThi, diem 
 from KetQua
-where maSinhVien = @Masv and maMonHoc = @Mon 
+where maSinhVien = @Masv and maMonHoc = @Mon
+select @diem = diem
+from @t where lanthi = 1
+select @diem1 = diem
+from @t where lanthi = 2
+select @diem2 = diem
+from @t where lanthi = 3
+print N'Lần 1: ' + cast(@diem as varchar) + N' điẻm'
+print N'Lần 2: ' + cast(@diem1 as varchar) + N' điẻm'
+print N'Lần 3: ' + cast(@diem2 as varchar) + N' điẻm'
 
-exec Ketquachung '0212001','THT01'
+
+
+exec Ketquachung '0212001','THT02'
+
 
 
 select * from SiSo
