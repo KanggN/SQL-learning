@@ -262,37 +262,33 @@ print cast(@Monhoc1 as nvarchar)
 print cast(@Monhoc2 as nvarchar)
 print cast(@Monhoc3 as nvarchar)
 exec Showmonhoc '0212001'
+--Câu 6.7 
+create proc Daulandau @Mon varchar(10) as
+select * from Ketqua where maSinhVien not in
+(select maSinhVien
+from KetQua
+where lanThi = 2 and maMonHoc = @Mon) 
+and maMonHoc = @Mon
+exec Daulandau 'THT02'
+--Câu 6.8
+--6.8.1
+create proc Ketquathi @Masv varchar(10) as
+select * 
+from KetQua
+where maSinhVien = @Masv
+--6.8.2
+alter proc Ketquathi1 @Masv varchar(10) as
+select A.Ma,B.lanThi,B.diem from (
+select mh.Ma,mh.tenMonHoc
+from MonHoc mh 
+where mh.maKhoa = (select l.maKhoa
+from SinhVien sv join Lop l on l.Ma = sv.maLop
+where sv.Ma = @Masv)) A left join (
+select * from KetQua where maSinhVien = @Masv) B
+on B.maMonHoc = A.Ma
+exec Ketquathi1 '0212003'
 
-select mh.tenMonHoc
-from SinhVien sv join Lop l on l.Ma = sv.maLop 
-join MonHoc mh on mh.maKhoa = l.maKhoa
-where sv.Ma = '0311001'
-
-create table Employee (
-	Id int primary key,
-	salary int
-)
-insert Employee values (1, 100)
-insert Employee values (2, 200)
-insert Employee values (3, 300)
-insert Employee values (4, 400)
-select max(case when rnk = 2 then salary else null end) as SecondHighestSalary from 
- (
- select salary , rank() over(order by salary desc) as rnk from Employee 
- ) s 
-
-	select max(case when r = 2 then salary else null end) from
- (select salary, rank() over(order by salary desc) as r
- from Employee ) t
-
-
-
-delete from Employee
-
-
-select * from Employee
-
-
+select * from KetQua where maSinhVien = '0212001'
 
 select * from SiSo
 select * from SinhVien
