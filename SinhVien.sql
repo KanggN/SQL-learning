@@ -222,7 +222,7 @@ from khoa k join lop l on l.maKhoa = k.Ma
 join SinhVien sv on sv.maLop = l.Ma
 where k.Ma = @Makhoa
 exec Sinhvienkhoa 'VL'
---Câu 6.5 Chưa xong
+--Câu 6.5 
 alter proc Ketquachung @Masv varchar(10), @Mon varchar(10) as
 declare @diem int, @diem1 int, @diem2 int
 declare @t table (lanthi int, diem float)
@@ -239,10 +239,58 @@ from @t where lanthi = 3
 print N'Lần 1: ' + cast(@diem as varchar) + N' điẻm'
 print N'Lần 2: ' + cast(@diem1 as varchar) + N' điẻm'
 print N'Lần 3: ' + cast(@diem2 as varchar) + N' điẻm'
-
-
-
 exec Ketquachung '0212001','THT02'
+--Câu 6.6
+alter proc Showmonhoc @Masv varchar(10) as
+declare @Monhoc nvarchar(20), @Monhoc1 nvarchar(20), @Monhoc2 nvarchar(20), @Monhoc3 nvarchar(20)
+declare @t table (Id int identity ,tenMonHoc nvarchar(20))
+insert into @t(tenMonHoc)
+select mh.tenMonHoc
+from SinhVien sv join Lop l on l.Ma = sv.maLop 
+join MonHoc mh on mh.maKhoa = l.maKhoa
+where sv.Ma = @Masv 
+select @Monhoc = tenMonHoc 
+from @t where Id = 1 
+select @Monhoc1 = tenMonHoc 
+from @t where Id = 2 
+select @Monhoc2 = tenMonHoc 
+from @t where Id = 3 
+select @Monhoc3 = tenMonHoc 
+from @t where Id = 4 
+print cast(@Monhoc as nvarchar)
+print cast(@Monhoc1 as nvarchar)
+print cast(@Monhoc2 as nvarchar)
+print cast(@Monhoc3 as nvarchar)
+exec Showmonhoc '0212001'
+
+select mh.tenMonHoc
+from SinhVien sv join Lop l on l.Ma = sv.maLop 
+join MonHoc mh on mh.maKhoa = l.maKhoa
+where sv.Ma = '0311001'
+
+create table Employee (
+	Id int primary key,
+	salary int
+)
+insert Employee values (1, 100)
+insert Employee values (2, 200)
+insert Employee values (3, 300)
+insert Employee values (4, 400)
+select max(case when rnk = 2 then salary else null end) as SecondHighestSalary from 
+ (
+ select salary , rank() over(order by salary desc) as rnk from Employee 
+ ) s 
+
+	select max(case when r = 2 then salary else null end) from
+ (select salary, rank() over(order by salary desc) as r
+ from Employee ) t
+
+
+
+delete from Employee
+
+
+select * from Employee
 
 
 
