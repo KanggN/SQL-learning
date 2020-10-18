@@ -277,7 +277,7 @@ select *
 from KetQua
 where maSinhVien = @Masv
 --6.8.2
-alter proc Ketquathi1 @Masv varchar(10) as
+create proc Ketquathi1 @Masv varchar(10) as
 select A.Ma,B.lanThi,B.diem from (
 select mh.Ma,mh.tenMonHoc
 from MonHoc mh 
@@ -286,11 +286,47 @@ from SinhVien sv join Lop l on l.Ma = sv.maLop
 where sv.Ma = @Masv)) A left join (
 select * from KetQua where maSinhVien = @Masv) B
 on B.maMonHoc = A.Ma
-exec Ketquathi1 '0212003'
+exec Ketquathi1 '0212002'
+--6.8.3 
+alter proc Ketquathi2 @Masv varchar(10) as
+select A.Ma,ISNULl(cast(B.lanThi as nvarchar), N'Chưa thi') lanthi,ISNULl(cast(B.diem as nvarchar), N'Chưa có điểm') diem
+from (select mh.Ma,mh.tenMonHoc
+from MonHoc mh 
+where mh.maKhoa = (select l.maKhoa
+from SinhVien sv join Lop l on l.Ma = sv.maLop
+where sv.Ma = @Masv)) A left join (
+select * from KetQua where maSinhVien = @Masv) B
+on B.maMonHoc = A.Ma
+exec Ketquathi2 '0212002'
+--Câu 6.9
+declare @diem float, @Masv varchar (10)
+set @Masv = '0311001' 
+exec Tradiemtb  @Masv , @diem output 
+insert Xeploai values (@Masv,isnull(@diem, 0),
+case when @diem >= 5 then N'Đạt' else N'Không đạt' end,
+case when @diem >=8 then N'Giỏi' when @diem >= 7 and @diem < 8 then N'Khá' when @diem is null then N'Không XL' else N'Trung bình' end)
+create table Xeploai (
+	Masv varchar (10) unique not null,
+	Diemtb decimal(18,2),
+	Ketqua nvarchar(10),
+	Hocluc nvarchar (10),
+)
 
-select * from KetQua where maSinhVien = '0212001'
 
-select * from SiSo
+
+
+
+
+
+CREATE proc Tradiemtb @Masv varchar(10), @Diemtb float output as  
+select @Diemtb = avg(kq.diem)  
+from KetQua kq join (select distinct kq.maMonHoc,max(kq.lanThi) as Lanthimax  
+from KetQua kq  
+where kq.maSinhVien = @Masv  
+group by kq.maMonHoc  
+) t on t.maMonHoc = kq.maMonHoc  
+where kq.maSinhVien = @Masv and kq.lanThi = t.Lanthimax
+
 select * from SinhVien
 select * from Lop
 select * from KhoaHoc
