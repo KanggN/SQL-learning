@@ -58,7 +58,7 @@ having count(Email) > 1
 --Rising Temperature----------------------------------------------------------------------------------
 create table Weather (
 	Id int primary key,
-	Recordate date,
+	Recorddate date,
 	Temperature int
 )
 insert Weather values (1,'2015-01-01',10)
@@ -67,13 +67,10 @@ insert Weather values (3,'2015-01-03',20)
 insert Weather values (4,'2015-01-04',30)
 
 select A.id
-from Weather A left join Weather B on B.Recordate = dateadd(day,-1,A.Recordate)
+from Weather A join Weather B on dateadd(day,-1,A.Recorddate) = B.Recorddate
 where A.Temperature > B.Temperature 
 
 
-Select W2.Id 
-from Weather W1 left Join Weather W2 on W1.Recordate = DateAdd(day,-1,W2.Recordate)
-where W1.Temperature < W2.Temperature
 
 
-select Recordate,dateadd(dd,-1,Recordate) from Weather where id =1 
+select * from Weather
