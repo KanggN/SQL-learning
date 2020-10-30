@@ -170,5 +170,81 @@ select top 1 customer_number from orders
 group by customer_number
 order by count(*) desc  ---order count (*) <---Học
 
+--Classes More Than 5 Students-----------------------------
+create table courses (
+	Student varchar(1) unique,
+	Class varchar(10)
+)
 
-select * from Orders
+insert courses values ('A','Math')
+insert courses values ('B','English')
+insert courses values ('C','Math')
+insert courses values ('D','Biology')
+insert courses values ('E','Math')
+insert courses values ('F','Computer')
+insert courses values ('G','Math')
+insert courses values ('H','Math')
+insert courses values ('I','Math')
+select class 
+from courses 
+group by class 
+having count(distinct Student)=6
+
+--Friend Requests I: Overall Acceptance Rate -------------------------
+create table friend_request (
+	sender_id int,
+	send_to_id int,
+	request_date date,
+)
+create table request_accepted (
+	requester_id int,
+	accepter_id int,
+	accept_date date,
+)
+insert friend_request values (1,2,'2016-06-01')
+insert friend_request values (1,3,'2016-06-01')
+insert friend_request values (1,4,'2016-06-01')
+insert friend_request values (2,3,'2016-06-02')
+insert friend_request values (3,4,'2016-06-09')
+
+insert request_accepted values (1,2,'2016-06-03')
+insert request_accepted values (1,3,'2016-06-08')
+insert request_accepted values (2,3,'2016-06-08')
+insert request_accepted values (3,4,'2016-06-09')
+insert request_accepted values (3,4,'2016-06-10')
+
+select cast(Accepted as dec(2,0)) / cast(Requested as dec(2,0)) from
+(select count(*) as Requested from friend_request) A,
+(select sum(uniAcceptID) as Accepted from
+(select requester_id,count (distinct accepter_id) uniAcceptID
+from request_accepted
+group by requester_id) t) B
+
+--Biggest Single Number---------------
+create table number (
+	num int
+)
+
+insert number values (8),(8),(3),(3),(1),(4),(5),(6)
+
+select max(num) num from (
+select distinct(num)
+from number
+group by num
+having count(*) = 1) t
+
+
+
+-----------------------------------------------------Easy------------------------------------------
+--Employees Earning More Than Their Managers  --
+--Customers Who Never Order--------
+--Duplicate Emails -----------------
+--Rising Temperature-----
+--Gameplay Analysis I----------
+--Gameplay Analysis II----------
+--Employee Bonus-------------------
+--Find Customer Referee-----------
+--Customer Placing the Largest Number of Orders-----------
+--Classes More Than 5 Students-------------
+--Friend Requests I: Overall Acceptance Rate -----
+--Biggest Single Number---------
