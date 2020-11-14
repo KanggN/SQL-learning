@@ -234,6 +234,105 @@ group by num
 having count(*) = 1) t
 
 
+-------------------Ads Performance-----------------------------
+create table Ads (
+	ad_id  int, 
+	[user_id]  int, 
+	[Action] varchar(10) check([Action] in ('Clicked','Viewed','Ignored'))
+)
+insert Ads values (1,1,'Clicked')
+insert Ads values (2,2,'Clicked')
+insert Ads values (3,3,'Viewed')
+insert Ads values (5,5,'Ignored')
+insert Ads values (1,7,'Ignored')
+insert Ads values (2,7,'Viewed')
+insert Ads values (3,5,'Clicked')
+insert Ads values (1,4,'Viewed')
+insert Ads values (2,11,'Viewed')
+insert Ads values (1,2,'Clicked')
+
+select A.ad_id, cast(cast(A.Clicked as decimal)/cast(B.Viewed as decimal)*100  as decimal(5,2)) from
+(select ad_id, count(*) as 'Clicked'
+from Ads
+where Action = 'Clicked'
+group by ad_id) A
+join
+(select ad_id, count(*) as 'Viewed'
+from Ads
+where Action in ('Clicked','Viewed')
+group by ad_id) B on A.ad_id = B.ad_id
+
+-------User Activity for the Past 30 Days I------------------------------
+create table Activity (
+	[user_id] int,
+	session_id int,
+	activity_date date,
+	activity_type varchar(20) 
+	check(activity_type in ('open_session','end_session','scroll_down','send_message'))
+)
+
+insert Activity values (1,1,'2019-07-20','open_session')
+insert Activity values (1,1,'2019-07-20','scroll_down')
+insert Activity values (1,1,'2019-07-20','end_session')
+insert Activity values (2,4,'2019-07-20','open_session')
+insert Activity values (2,4,'2019-07-21','send_message')
+insert Activity values (2,4,'2019-07-21','end_session')
+insert Activity values (3,2,'2019-07-21','open_session')
+insert Activity values (3,2,'2019-07-21','send_message')
+insert Activity values (3,2,'2019-07-21','end_session')
+insert Activity values (4,3,'2019-06-25','open_session')
+insert Activity values (4,3,'2019-06-25','end_session')
+
+select activity_date, count(distinct user_id)
+from Activity
+where datediff(day,activity_date,'2019-07-27') < 30
+group by activity_date
+--where activity_date <= '2019-07-27' and activity_date >= dateadd(day,-30,'2019-07-27')
+
+select * from Activity
+
+-------User Activity for the Past 30 Days II------------------------------
+insert Activity values (1,1,'2019-07-20','open_session')
+insert Activity values (1,1,'2019-07-20','scroll_down')
+insert Activity values (1,1,'2019-07-20','end_session')
+insert Activity values (2,4,'2019-07-20','open_session')
+insert Activity values (2,4,'2019-07-21','send_message')
+insert Activity values (2,4,'2019-07-21','end_session')
+insert Activity values (3,2,'2019-07-21','open_session')
+insert Activity values (3,2,'2019-07-21','send_message')
+insert Activity values (3,2,'2019-07-21','end_session')
+insert Activity values (3,5,'2019-07-21','open_session')
+insert Activity values (3,5,'2019-07-21','scroll_down')
+insert Activity values (3,5,'2019-07-21','end_session')
+insert Activity values (4,3,'2019-06-25','open_session')
+insert Activity values (4,3,'2019-06-25','end_session')
+
+select cast((sessions/users) as decimal(5,2)) as 'average_sessions_per_user' from (
+select cast(count(distinct user_id) as decimal(5,2)) as 'users'
+from Activity
+where datediff(day,activity_date,'2019-07-27') < 30 ) A,
+(select cast(count(*) as decimal(5,2)) as 'sessions' from
+(select distinct session_id, user_id
+from Activity
+where datediff(day,activity_date,'2019-07-27') < 30) t) B
+
+  
+
+select round(cast(count(activity_type) as float) /cast(count(distinct user_id) as float),2) as average_sessions_per_user
+
+select count(distinct user_id) as 'users', count(distinct session_id) as 'sessions'
+from Activity 
+where DATEDIFF(day,activity_date,'2019-07-27')<=30
+and activity_type = 'open_session' --in ('scroll_down','send_message')
+
+
+
+select * from Activity
+
+
+
+
+
 
 -----------------------------------------------------Easy------------------------------------------
 --Employees Earning More Than Their Managers  --
@@ -248,3 +347,8 @@ having count(*) = 1) t
 --Classes More Than 5 Students-------------
 --Friend Requests I: Overall Acceptance Rate -----
 --Biggest Single Number---------
+--Ads Performance-----------------------------
+
+
+
+
