@@ -316,23 +316,41 @@ where datediff(day,activity_date,'2019-07-27') < 30 ) A,
 from Activity
 where datediff(day,activity_date,'2019-07-27') < 30) t) B
 
-  
-
-select round(cast(count(activity_type) as float) /cast(count(distinct user_id) as float),2) as average_sessions_per_user
-
-select count(distinct user_id) as 'users', count(distinct session_id) as 'sessions'
-from Activity 
-where DATEDIFF(day,activity_date,'2019-07-27')<=30
-and activity_type = 'open_session' --in ('scroll_down','send_message')
-
-
-
 select * from Activity
+--Friendly Movies Streamed Last Month--------------------------------------------------
+create table TVProgram(
+	program_date date,
+	content_id int,
+	channel varchar(20)
+	primary key (program_date,content_id)
+)
+create table Content(
+	content_id varchar(1),
+	title varchar(20),
+	Kids_content char(1) constraint CHK_content check (Kids_content in ('Y','N')),
+	content_type varchar(10)
+)
+insert TVProgram values ('2020-06-10 08:00',1,'LC-Channel')
+insert TVProgram values ('2020-05-11 12:00',2,'LC-Channel')
+insert TVProgram values ('2020-05-12 12:00',3,'LC-Channel')
+insert TVProgram values ('2020-05-13 14:00',4,'Disney Ch')
+insert TVProgram values ('2020-06-18 14:00',4,'Disney Ch')
+insert TVProgram values ('2020-07-15 16:00',5,'Disney Ch')
+
+insert Content values (1,'Leetcode Movie','N','Movies')
+insert Content values (2,'Alg. for Kids','Y','Series')
+insert Content values (3,'Database Sols','N','Series')
+insert Content values (4,'Aladin','Y','Movies')
+insert Content values (5,'Cinderella','Y','Movies')
+
+select c.title
+from Content c join TVProgram t on c.content_id = t.content_id
+where month(t.program_date) = 6 and year(t.program_date) = 2020
+and c.content_type = 'Movies' and c.Kids_content = 'Y'
 
 
-
-
-
+select * from TVProgram
+select * from Content
 
 -----------------------------------------------------Easy------------------------------------------
 --Employees Earning More Than Their Managers  --
@@ -348,7 +366,9 @@ select * from Activity
 --Friend Requests I: Overall Acceptance Rate -----
 --Biggest Single Number---------
 --Ads Performance-----------------------------
-
+--User Activity for the Past 30 Days I------------------------------
+--User Activity for the Past 30 Days II------------------------------
+--Friendly Movies Streamed Last Month---------------------------------
 
 
 
