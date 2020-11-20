@@ -348,9 +348,118 @@ from Content c join TVProgram t on c.content_id = t.content_id
 where month(t.program_date) = 6 and year(t.program_date) = 2020
 and c.content_type = 'Movies' and c.Kids_content = 'Y'
 
-
 select * from TVProgram
 select * from Content
+
+--nth-highest-salary--------------------------------------------------
+create table Employee(
+	Id int,
+	Salary int
+)
+insert Employee values (1,100)
+insert Employee values (2,200)
+insert Employee values (3,300)
+insert Employee values (4,500)
+insert Employee values (5,200)
+insert Employee values (6,800)
+insert Employee values (7,600)
+
+CREATE FUNCTION getNthHighestSalary(@N INT) RETURNS INT AS
+BEGIN
+RETURN (
+	select top 1 salary from( 
+	select top (1*@n) Salary 
+	from Employee
+	order by Salary desc) t
+	order by Salary asc
+);
+END
+
+CREATE FUNCTION getNthHighestSalary1(@N INT) RETURNS INT AS
+BEGIN
+RETURN (
+select distinct salary 
+from Employee order by Salary desc offset @N-1 ROWS
+fetch next 1 ROW ONLY
+);
+END
+select dbo.getNthHighestSalary1(10)
+
+--Second Degree Follower------------------------------------------------
+create table Follow (
+	followee char(1),
+	follower char(1)
+)
+insert Follow values ('A','B')
+insert Follow values ('B','C')
+insert Follow values ('B','D')
+insert Follow values ('D','E')
+
+select * from Follow
+
+select followee as follower ,count(*) as num
+from Follow
+where followee in (select distinct follower from Follow)
+group by followee
+
+SELECT distinct f1.follower, count(*)--COUNT(DISTINCT f2.follower) AS num 
+FROM follow AS f1 JOIN follow AS f2 ON f1.follower = f2.followee
+GROUP BY f1.follower 
+ORDER BY f1.follower;
+--Salesperson--------------------------------------------------------
+create table salesperson (
+	sales_id int unique,
+	[name] varchar(10),
+	salary int,
+	comission_rate int,
+	hire_date date
+	constraint PK_salesperson primary key (sales_id, [name])
+)
+create table company (
+	com_id int,
+	[name] varchar(20),
+	city varchar(20)
+)
+create table orders (
+	order_id int,
+	[date] date,
+	com_id int,
+	sales_id int,
+	amount int,
+	constraint FK_sales_orders foreign key (sales_id) references salesperson(sales_id),
+)
+
+
+SET DATEFORMAT mdy
+insert salesperson values (1,'John',100000,6,'4-1-2006')
+insert salesperson values (2,'Amy',120000,5,'5-1-2006')
+insert salesperson values (3,'Mark',65000,12,'12-25-2008')
+insert salesperson values (4,'Pam',25000,25,'1-1-2005')
+insert salesperson values (5,'Alex',50000,10,'2-3-2007')
+
+insert company values (1,'RED','Boston')
+insert company values (2,'ORANGE','New York')
+insert company values (3,'YELLOW','Boston')
+insert company values (4,'GREEN','Austin')
+
+insert Orders values (1,'1-1-2014',3,4,100000)
+insert Orders values (2,'2-1-2014',4,5,5000)
+insert Orders values (3,'3-1-2014',1,1,50000)
+insert Orders values (4,'4-1-2014',1,4,25000)
+
+
+select * from salesperson
+select * from company
+select * from Orders
+
+select [name]
+from salesperson
+where sales_id not in (
+select o.sales_id
+from company c join Orders o on o.com_id = c.com_id
+where c.name = 'RED')
+
+
 
 -----------------------------------------------------Easy------------------------------------------
 --Employees Earning More Than Their Managers  --
@@ -369,6 +478,11 @@ select * from Content
 --User Activity for the Past 30 Days I------------------------------
 --User Activity for the Past 30 Days II------------------------------
 --Friendly Movies Streamed Last Month---------------------------------
+--Salesperson--------------------------------------------------------
+-----------------------------------------------------Medium------------------------------------------
+--nth-highest-salary--------------------------------------------------
+--Second Degree Follower------------------------------------------------
+
 
 
 

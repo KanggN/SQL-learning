@@ -1,0 +1,5 @@
+--Cách tao set date format: SET DATEFORMAT mdy
+--Xem dateformat đang dùng: DBCC useroptions
+--Khi tạo foreign key gặp lỗi: There are no primary or candidate keys in the referenced table 'company' that match the referencing 
+column list in the foreign key 'FK_com_orders'
+---> Do primary key bên bảng kia là compound key nên không thể tạo được
